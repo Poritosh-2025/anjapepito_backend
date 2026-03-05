@@ -33,7 +33,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
-        "CSRF_TRUSTED_ORIGINS", "https://anjaapi.dsrt321.online/,http://localhost:8000"
+        "CSRF_TRUSTED_ORIGINS", "https://anjaapi.dsrt321.online,http://localhost:8000"
     ).split(",")
     if origin.strip()
 ]
