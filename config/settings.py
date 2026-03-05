@@ -3,6 +3,7 @@ Single consolidated settings file.
 All environment-specific values controlled via .env file.
 No base/dev/prod split — one file, fully env-driven.
 """
+
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -14,7 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ["localhost"]),
-    
     USE_SQLITE=(bool, False),
     JWT_ACCESS_TOKEN_LIFETIME_MINUTES=(int, 15),
     JWT_REFRESH_TOKEN_LIFETIME_DAYS=(int, 7),
@@ -30,7 +30,13 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
-CSRF_TRUSTED_ORIGINS= [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://harryapi.dsrt321.online,http://localhost:8000').split(',') if origin.strip()]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS", "https://anjaapi.dsrt321.online/,http://localhost:8000"
+    ).split(",")
+    if origin.strip()
+]
 # ── Applications ──
 
 DJANGO_APPS = [
@@ -167,23 +173,14 @@ AUTH_PASSWORD_VALIDATORS = [
         ),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation"
-            ".MinimumLengthValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation" ".MinimumLengthValidator"),
         "OPTIONS": {"min_length": 8},
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation"
-            ".CommonPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation" ".CommonPasswordValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation"
-            ".NumericPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation" ".NumericPasswordValidator"),
     },
 ]
 
@@ -200,9 +197,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -213,9 +208,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": (
@@ -232,9 +225,7 @@ REST_FRAMEWORK = {
         "user": "120/minute",
         "otp": "5/minute",
     },
-    "DEFAULT_RENDERER_CLASSES": (
-        "rest_framework.renderers.JSONRenderer",
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "EXCEPTION_HANDLER": "core.exceptions.custom_exception_handler",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%SZ",
@@ -288,10 +279,12 @@ SOCIALACCOUNT_PROVIDERS = {
 # ── Celery ──
 
 CELERY_BROKER_URL = env(
-    "CELERY_BROKER_URL", default="redis://127.0.0.1:6379/1",
+    "CELERY_BROKER_URL",
+    default="redis://127.0.0.1:6379/1",
 )
 CELERY_RESULT_BACKEND = env(
-    "CELERY_RESULT_BACKEND_URL", default="redis://127.0.0.1:6379/2",
+    "CELERY_RESULT_BACKEND_URL",
+    default="redis://127.0.0.1:6379/2",
 )
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -306,17 +299,16 @@ CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
 
 # ── CORS ──
 CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-    'accept',
-    'origin',
-    'x-requested-with',
+    "content-type",
+    "authorization",
+    "accept",
+    "origin",
+    "x-requested-with",
 ]
-CORS_ALLOW_METHODS = [
-    'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'
-]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 CORS_ALLOWED_ORIGINS = env(
-    "CORS_ALLOWED_ORIGINS", default="http://localhost:3000,http://localhost:5173",
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000,http://localhost:5173",
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = env.bool("CORS_ALLOW_ALL_ORIGINS", default=False)
@@ -334,7 +326,8 @@ EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="poritoshpal98@gmail.com")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="cdjr oxby fnat wyog")
 DEFAULT_FROM_EMAIL = env(
-    "DEFAULT_FROM_EMAIL", default="poritoshpal98@gmail.com",
+    "DEFAULT_FROM_EMAIL",
+    default="poritoshpal98@gmail.com",
 )
 
 
@@ -361,33 +354,39 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ── Security hardening (env-toggled for production) ──
 
 SECURE_BROWSER_XSS_FILTER = env.bool(
-    "SECURE_BROWSER_XSS_FILTER", default=not DEBUG,
+    "SECURE_BROWSER_XSS_FILTER",
+    default=not DEBUG,
 )
 SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
-    "SECURE_CONTENT_TYPE_NOSNIFF", default=not DEBUG,
+    "SECURE_CONTENT_TYPE_NOSNIFF",
+    default=not DEBUG,
 )
 SECURE_HSTS_SECONDS = env.int(
-    "SECURE_HSTS_SECONDS", default=31536000 if not DEBUG else 0,
+    "SECURE_HSTS_SECONDS",
+    default=31536000 if not DEBUG else 0,
 )
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=not DEBUG,
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS",
+    default=not DEBUG,
 )
 SECURE_HSTS_PRELOAD = env.bool(
-    "SECURE_HSTS_PRELOAD", default=not DEBUG,
+    "SECURE_HSTS_PRELOAD",
+    default=not DEBUG,
 )
 SECURE_SSL_REDIRECT = env.bool(
-    "SECURE_SSL_REDIRECT", default=not DEBUG,
+    "SECURE_SSL_REDIRECT",
+    default=not DEBUG,
 )
 SESSION_COOKIE_SECURE = env.bool(
-    "SESSION_COOKIE_SECURE", default=not DEBUG,
+    "SESSION_COOKIE_SECURE",
+    default=not DEBUG,
 )
 CSRF_COOKIE_SECURE = env.bool(
-    "CSRF_COOKIE_SECURE", default=not DEBUG,
+    "CSRF_COOKIE_SECURE",
+    default=not DEBUG,
 )
 X_FRAME_OPTIONS = "DENY"
-SECURE_PROXY_SSL_HEADER = (
-    ("HTTP_X_FORWARDED_PROTO", "https") if not DEBUG else None
-)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if not DEBUG else None
 
 
 # ── S3 media storage (enabled when AWS_STORAGE_BUCKET_NAME is set) ──
@@ -423,8 +422,7 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": (
-                "[{asctime}] {levelname} {name} "
-                "{module}:{lineno} - {message}"
+                "[{asctime}] {levelname} {name} " "{module}:{lineno} - {message}"
             ),
             "style": "{",
         },
