@@ -10,8 +10,13 @@ urlpatterns = [
     path("api/v1/admin/", include("apps.administrators.urls")),
     path("api/v1/dashboard/", include("apps.dashboard.urls")),
     path("api/v1/users/", include("apps.user_management.urls")),
+    path("api/v1/cms/", include("apps.content_management.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
 ]
 
 if settings.DEBUG:
